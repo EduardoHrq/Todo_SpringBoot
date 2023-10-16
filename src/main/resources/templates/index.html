@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Document</title>
+</head>
+<style>
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    overflow: hidden;
+  }
+
+  .conteudo {
+    width: 50vw;
+    max-width: 700px;
+    min-width: 320px;
+    margin: 25px auto 0;
+  
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  
+  }
+
+  .conteudo form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .conteudo form input {
+    padding: 14px 16px;
+    border-radius: 12px;
+    outline: none;
+  }
+
+  .editSelects{
+    width: 100%;
+    padding: 0 12px;
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .slct {
+    flex: 1;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+.conteudo form button {
+  padding: 12px 18px;
+  width: 50%;
+  margin: 0 auto;
+  font-weight: bold;
+  color: #FFF;
+  border-radius: 12px;
+}
+
+.spaceTasks {
+  height: 60vh;
+  padding: 0 4px;
+  overflow-y: visible;
+  overflow-x: hidden;
+}
+
+.task {
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 5px;
+}
+
+.task .title {
+  flex: 1;
+}
+
+.task .prioridade {
+  border-radius: 9999px;
+  width: 75px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.task .prioridade .ball{
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.tag {
+  width: 100%;
+  max-width: 100px;
+  border-radius: 9999px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.links {
+  padding: 8px 12px;
+  border-radius: 9999px;
+}
+
+.listTags{
+  display: flex;
+  gap: 8px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding: 5px 0;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* Cor da alça da barra de rolagem */
+  border-radius: 6px;
+}
+
+
+</style>
+<body class="bg-slate-800">
+  <div class="conteudo">
+    <form action="data/create" method="post">
+  
+      <input class="text-center" type="text" name="title" placeholder="TAREFA">
+  
+      <div class="editSelects">
+
+        <input class="slct" type="text" id="tags" list="tag-list" placeholder="TAG" name="tag_name">
+        <datalist id="tag-list">
+          <option th:each="tag : ${categorias}" th:value="${tag.name}"></option>
+      </datalist>
+
+      <select id="meuSelect" class="slct" name="priority" >
+        <optgroup label="PRIORIDADE">
+          <option class="bg-red-500" value="ALTA">Alta</option>
+          <option class="bg-yellow-500" value="MÉDIA">Média</option>
+          <option class="bg-green-500" value="BAIXA">Baixa</option>
+        </optgroup>
+      </select>
+      
+    </div>
+      <button class="bg-blue-600" type="submit">Adicionar</button>
+  
+    </form>
+
+    <div class="listTags">
+      <a th:class="${tag}? 'bg-slate-300/50 links' : 'bg-slate-300 links'" href="/">All</a>
+      <a th:each="cat : ${categorias}" th:class="${tag == cat.name}? 'bg-slate-300 links' : 'bg-slate-300/50 links'"  th:text="${cat.name}" th:href="@{/filter?tag={catName}(catName=${cat.name})}"></a>
+    </div>
+  
+    <div class="flex flex-col gap-3 spaceTasks">
+  
+      <div th:class="${task.status == true}? 'task bg-blue-500/[.4] bg-opcaity' : 'task bg-slate-600'" th:each="task : ${tarefas}">
+        <div th:if="${task.status == false}">
+          <input class="w-[20px] h-[20px] mt-2 accent-blue-300" type="checkbox" name="" id="">
+        </div>
+        <div th:if="${task.status == 'true'}">
+          <input class="w-[20px] h-[20px] mt-2 accent-blue-300" type="checkbox" name="" id="" checked>
+        </div>
+        <div class="title ml-3 text-white" th:text="${task.title}"></div>
+        <div class="details">
+          <div class="prioridade bg-red-500" th:if="${task.priority == 'ALTA'}">
+            <div class="ball bg-red-700"></div>
+            <div th:text="${task.priority}">
+            </div>
+          </div>
+          <div class="prioridade bg-yellow-500" th:if="${task.priority == 'MÉDIA'}">
+            <div class="ball bg-yellow-700"></div>
+            <div th:text="${task.priority}">
+            </div>
+          </div>
+          <div class="prioridade bg-green-500" th:if="${task.priority == 'BAIXA'}">
+            <div class="ball bg-green-700"></div>
+            <div th:text="${task.priority}">
+            </div>
+          </div>
+          <div class="tag bg-slate-200" th:if="${task.tag != null and not #lists.isEmpty(task.tag.name)}" th:text="${task.tag.name}"></div>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+
+  <script>
+    const selectElement = document.getElementById("meuSelect");
+
+      selectElement.addEventListener("change", function () {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        selectElement.style.backgroundColor = selectedOption.style.backgroundColor;
+      });
+
+  </script>
+</body>
+</html>
