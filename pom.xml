@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.todolist</groupId>
 	<artifactId>TodoList</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>TodoList</name>
 	<description>lista de tarefas</description>
 	<properties>
